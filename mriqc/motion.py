@@ -23,11 +23,13 @@ def calc_frame_dispalcement(realignment_parameters_file):
 
 def get_mean_frame_displacement_disttribution(realignment_parameters_files):
     mean_FDs = []
+    max_FDs = []
     for realignment_parameters_file in realignment_parameters_files:
         FD_power = calc_frame_dispalcement(realignment_parameters_file)
         mean_FDs.append(FD_power.mean())
+        max_FDs.append(FD_power.max())
         
-    return mean_FDs
+    return mean_FDs, max_FDs
 
 def plot_frame_displacement(realignment_parameters_file, mean_FD_distribution=None, figsize=(11.7,8.3)):
 

@@ -25,15 +25,18 @@ def create_report(subject_id, tsnr_file, realignment_parameters_file, mean_epi_f
         figsize=(8.3, 8.3))
     report.savefig(fig, dpi=300)
     fig.clf()
+    plt.close()
     
     fig = plot_epi_T1_corregistration(mean_epi_file, reg_file, fssubjects_dir, subject_id, 
         similarity_distribution, figsize=(8.3, 8.3))
     report.savefig(fig, dpi=300)
     fig.clf()
+    plt.close()
      
     fig = plot_frame_displacement(realignment_parameters_file, mean_FD_distribution, figsize=(8.3, 8.3))
     report.savefig(fig, dpi=300)
     fig.clf()
+    plt.close()
     
     report.close()
     gc.collect()

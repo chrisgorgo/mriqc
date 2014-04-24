@@ -49,13 +49,13 @@ def plot_mosaic(nifti_file, title=None, overlay_mask = None, figsize=(11.7,8.3))
         data_mask = np.logical_not(np.isnan(mean_data))
         if overlay_mask:
             ax.set_rasterized(True)
-        ax.imshow(np.fliplr(mean_data[:,:,image].T), vmin=mean_data[data_mask].min(), 
-                   vmax=mean_data[data_mask].max(), 
+        ax.imshow(np.fliplr(mean_data[:,:,image].T), vmin=np.percentile(mean_data[data_mask], 0.5), 
+                   vmax=np.percentile(mean_data[data_mask],99.5), 
                    cmap=cm.Greys_r, interpolation='nearest', origin='lower')  # @UndefinedVariable
         if overlay_mask:
             cmap = cm.Reds  # @UndefinedVariable
             cmap._init() 
-            alphas = np.linspace(0, 0.5, cmap.N+3)
+            alphas = np.linspace(0, 0.75, cmap.N+3)
             cmap._lut[:,-1] = alphas
             ax.imshow(np.fliplr(overlay_data[:,:,image].T), vmin=0, vmax=1,
                    cmap=cmap, interpolation='nearest', origin='lower')  # @UndefinedVariable
@@ -96,11 +96,11 @@ def plot_distrbution_of_values(main_file, mask_file, xlabel, distribution=None, 
     
     gs = GridSpec(2, 1)
     ax = fig.add_subplot(gs[0, 0])
-    sns.distplot(data.astype(np.double), ax=ax)
+    sns.distplot(data.astype(np.double), kde=False, bins=100, ax=ax)
     ax.set_xlabel(xlabel)
     
     ax = fig.add_subplot(gs[1, 0])
-    sns.distplot(distribution, ax=ax)
+    sns.distplot(np.array(distribution).astype(np.double), ax=ax)
     cur_val = np.median(data)
     label = "%g"%cur_val
     plot_vline(cur_val, label, ax=ax)

@@ -8,6 +8,7 @@ from mriqc.misc import plot_vline
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_pdf import FigureCanvasPdf as FigureCanvas
 from matplotlib.gridspec import GridSpec
+import pylab as plt
 
 def get_similarity_distribution(mincost_files):
     similarities = []
@@ -19,22 +20,19 @@ def get_similarity_distribution(mincost_files):
     
 def plot_epi_T1_corregistration(mean_epi_file, reg_file, fssubjects_dir, subject_id, similarity_distribution=None, figsize=(11.7,8.3),):
        
-    fig = Figure(figsize=figsize)
-    FigureCanvas(fig)
+    fig = plt.figure(figsize=figsize)
     
     if similarity_distribution:
-        gs = GridSpec(2, 1)
-        ax = fig.add_subplot(gs[1, 0])
+        ax = plt.subplot(2,1,1)
         sns.distplot(similarity_distribution.values(), ax=ax)
         ax.set_xlabel("EPI-T1 similarity after coregistration (over all subjects)")
         cur_similarity = similarity_distribution[subject_id]
         label = "similarity = %g"%cur_similarity
         plot_vline(cur_similarity, label, ax=ax)
         
-        ax = fig.add_subplot(gs[0, 0])
+        ax = plt.subplot(2,1,0)
     else:
-        gs = GridSpec(1, 1)
-        ax = fig.add_subplot(gs[0, 0])
+        ax = plt.subplot(1,1,0)
     
     res = ApplyVolTransform(source_file = mean_epi_file,
                             reg_file = reg_file,
