@@ -21,7 +21,6 @@ if __name__ == '__main__':
     mincost_files = [glob(data_dir + "/%s/preproc/bbreg/*_register.dat.mincost"%(subject))[0] for subject in subjects]
     similarity_distribution = get_similarity_distribution(mincost_files)
     
-      
     realignment_parameters_files = [glob(data_dir + "/%s/preproc/motion/*.par"%(subject))[0] for subject in subjects]
     mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_disttribution(realignment_parameters_files)
       
@@ -38,15 +37,11 @@ if __name__ == '__main__':
         print subject_id
         #setting paths for this subject
         tsnr_file = glob(data_dir + "/%s/preproc/tsnr/*_tsnr.nii.gz"%(subject_id))[0]
-        
         realignment_parameters_file = glob(data_dir + "/%s/preproc/motion/*.par"%( subject_id))[0]
-
         mean_epi_file = glob(data_dir + "/%s/preproc/mean/*.nii.gz"%( subject_id))[0]
         mask_file = data_dir + "/%s/preproc/mask/%s_brainmask.nii"%( subject_id, subject_id)
         reg_file = glob(data_dir + "/%s/preproc/bbreg/*_register.dat"%( subject_id))[0]
         fssubjects_dir = "/scr/adenauer1/internet_study/freesurfer/"
-
-        mincost_file = glob(data_dir + "/%s/preproc/bbreg/*_%s_register.dat.mincost"%(subject_id, subject_id))[0]
         
         output_file = "/scr/adenauer1/internet_study/results/%s/report.pdf"%( subject_id)
         
