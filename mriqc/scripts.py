@@ -27,6 +27,7 @@ def nifti_file(string):
 def main():
     parser = argparse.ArgumentParser(description="Genereat PDF quality report.")
     parser.add_argument("epi_file", help="EPI timeseries (4D NIFTI file).", type=nifti_file)
+    parser.add_argument("--melodic_folder", help="Path to MELODIC output run on the epi_file (optional).", type=str)
     parser.add_argument("output_file", help="Name of the output PDF file.", type=str)
     
     args = parser.parse_args()
@@ -46,6 +47,10 @@ def main():
     fig = plot_mosaic(tsnr_epi_data, title="tSNR EPI", figsize=(8.3, 11.7))
     report.savefig(fig, dpi=300)
     fig.clf()
+    
+#     fig = plot_ICA(args.epi_file, args.melodic_folder, figsize=(8.3, 11.7))
+#     report.savefig(fig, dpi=300)
+#     fig.clf()
     
     report.close()
     gc.collect()
