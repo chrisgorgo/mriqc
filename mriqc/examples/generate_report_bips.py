@@ -1,6 +1,6 @@
 from glob import glob
 from mriqc.correlation import get_similarity_distribution
-from mriqc.motion import get_mean_frame_displacement_disttribution
+from mriqc.motion import get_mean_frame_displacement_distribution, get_mean_frame_intensity_displacement_distribution
 from mriqc.volumes import get_median_distribution
 from mriqc.reports import create_report
 import pandas as pd
@@ -22,13 +22,16 @@ if __name__ == '__main__':
     similarity_distribution = get_similarity_distribution(mincost_files)
     
     realignment_parameters_files = [glob(data_dir + "/%s/preproc/motion/*.par"%(subject))[0] for subject in subjects]
-    mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_disttribution(realignment_parameters_files)
+    mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_distribution(realignment_parameters_files)
       
+    t2_files = [data_dir + "results/%s/func.nii.gz"%(subject) for subject in subjects]
+    mean_FID_distribution, max_FID_distribution = get_mean_frame_intensity_displacement_distribution(t2_files)
+
     tsnr_files = [glob(data_dir + "/%s/preproc/tsnr/*_tsnr.nii.gz"%(subject))[0] for subject in subjects]
     mask_files = [data_dir + "/%s/preproc/mask/%s_brainmask.nii"%( subject, subject) for subject in subjects]
     tsnr_distributions = get_median_distribution(tsnr_files, mask_files)
      
-    df = pd.DataFrame(zip(subjects, similarity_distribution, mean_FD_distribution, max_FD_distribution, tsnr_distributions), columns = ["subject_id", "coregistration quality", "Mean FD", "Max FD", "Median tSNR"])
+    df = pd.DataFrame(zip(subjects, similarity_distribution, mean_FD_distribution, max_FD_distribution, mean_FID_distribution, max_FID_distribution, tsnr_distributions), columns = ["subject_id", "coregistration quality", "Mean FD", "Max FD", "Mean FID", "Max FID", "Median tSNR"])
     df.to_csv("/scr/adenauer1/internet_study/summary.csv")
     
     similarity_distribution = dict(zip(subjects, similarity_distribution))
@@ -45,6 +48,8 @@ if __name__ == '__main__':
         
         output_file = "/scr/adenauer1/internet_study/results/%s/report.pdf"%( subject_id)
         
+        t2_file = data_dir + "results/%s/func.nii.gz"%(subject_id)
+        
         report = Node(Function(input_names=['subject_id', 
                                              'tsnr_file', 
                                              'realignment_parameters_file', 
@@ -55,7 +60,9 @@ if __name__ == '__main__':
                                              'similarity_distribution', 
                                              'mean_FD_distribution', 
                                              'tsnr_distributions', 
-                                             'output_file'], 
+                                             'output_file',
+                                             't2_file',
+                                             'mean_FID_distribution'], 
                                 output_names=['out'],
                                 function = create_report), name="report_%s"%(subject_id).replace(".", "_"))
         report.inputs.subject_id = subject_id
@@ -69,6 +76,8 @@ if __name__ == '__main__':
         report.inputs.mean_FD_distribution = mean_FD_distribution
         report.inputs.tsnr_distributions = tsnr_distributions
         report.inputs.output_file = output_file
+        report.inputs.t2_file = t2_file
+        report.inputs.mean_FID_distribution = mean_FID_distribution
         report.plugin_args={'override_specs': 'request_memory = 4000'}
         wf.add_nodes([report])
               
