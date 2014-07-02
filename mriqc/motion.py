@@ -83,7 +83,8 @@ def plot_frame_displacement(realignment_parameters_file, mean_FD_distribution=No
     
     ax = fig.add_subplot(grid[0,:-1])
     ax.plot(FD_power)
-    ax.axhline(threshold, color='r')
+    if percentage_outliers != 0.0:
+        ax.axhline(threshold, color='r')
     ax.set_xlim((0, len(FD_power)))
     ax.set_ylabel("Frame Displacement [mm]")
     ax.set_xlabel("Frame number")
@@ -120,8 +121,9 @@ def plot_frame_intensity_displacement(main_file, mean_FID_distribution=None, thr
 
     ax = fig.add_subplot(grid[0,:-1])
     ax.plot(FID_power)
-    ax.axhline(threshold, color='r')
-    ax.axhline(-threshold, color='r')
+    if percentage_outliers != 0.0:
+        ax.axhline(threshold, color='r')
+        ax.axhline(-threshold, color='r')
     ax.set_xlim((0, len(FID_power)))
     ax.set_ylabel("Frame Intensity Displacement [z-score]")
     ax.set_xlabel("Frame number")
